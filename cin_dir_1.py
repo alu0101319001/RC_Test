@@ -9,10 +9,12 @@
 # ./cdDH.py 30 45
 
 import sys
+import argparse
 from math import *
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import lectura_fichero as lf
 
 # ******************************************************************************
 # Declaración de funciones
@@ -90,37 +92,81 @@ def matriz_T(d,theta,a,alpha):
          ,[      0,                0,                0,         1]
          ]
 # ******************************************************************************
+"""
+# Recibir manipulador por fichero
+parser = argparse.ArgumentParser()
+parser.add_argument("-f", "--file", type=str, nargs='?', default='manipulador_1.txt')
+parser.add_argument("-ft", "--file_type", type=str, nargs='?', default='manipulator')
+args = parser.parse_args()
 
+file_name = args.file
+file_type = args.file_type
+if file_type == "manipulator":
+  manipulator = lf.read_manipulator_file(file_name)
+  print(manipulator)
+elif file_type == "dh":
+  dh = lf.read_DH_file(file_name)
+  print(dh)
+
+# Parametros D-H:
+d = dh[1]
+th = dh[2]
+a = dh[3]
+al = dh[4]
+
+# Orígenes para cada articulacion
+origins = []
+for i in range(dh[0] + 1):
+  point_name = "o" + str(i) + str(i)
+  p = [point_name, [0,0,0,1]]
+  origins.append(p)
+print(origins)
+
+# Calculo matrices transformacion
+matrix_T = np.array()
+for i in range(dh[0]):
+  matrix_name = "T" + str(i) + str(i+1)
+  matrix_T.append([matrix_name, matriz_T(d[i],th[i],a[i],al[i])])
+for j in range(dh[0] - 1):
+   
+"""
+  
 
 # Introducción de los valores de las articulaciones
-nvar=2 # Número de variables
+nvar=3 # Número de variables
+print(sys.argv)
 if len(sys.argv) != nvar+1:
   sys.exit('El número de articulaciones no es el correcto ('+str(nvar)+')')
 p=[float(i) for i in sys.argv[1:nvar+1]]
 
 # Parámetros D-H:
-#        1    2
-d  = [   0,   0]
-th = [p[0],p[1]]
-a  = [  10,   5]
-al = [   0,   0]
+#        1     2      3
+d  = [   5,    0,     0]
+th = [p[0],   90, -p[2]]
+a  = [   0, p[1],     2]
+al = [   0,  -90,     0]
 
 # Orígenes para cada articulación
 o00=[0,0,0,1]
 o11=[0,0,0,1]
 o22=[0,0,0,1]
-
+o33=[0,0,0,1]
 # Cálculo matrices transformación
 T01=matriz_T(d[0],th[0],a[0],al[0])
 T12=matriz_T(d[1],th[1],a[1],al[1])
+T23=matriz_T(d[2],th[2],a[2],al[2])
+T13=np.dot(T12, T23)
 T02=np.dot(T01,T12)
+T03=np.dot(T01,T13)
 
 # Transformación de cada articulación
 o10 =np.dot(T01, o11).tolist()
 o20 =np.dot(T02, o22).tolist()
+o30 =np.dot(T03, o33).tolist()
 
 # Mostrar resultado de la cinemática directa
-muestra_origenes([o00,o10,o20])
-muestra_robot   ([o00,o10,o20])
+muestra_origenes([o00,o10,o20,o30])
+muestra_robot   ([o00,o10,o20,o30])
 input()
+
 
