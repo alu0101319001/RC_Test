@@ -1,0 +1,1 @@
+python cin_dir_1.py -f dh_1.txt -ft dh
