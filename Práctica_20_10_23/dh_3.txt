@@ -1,0 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Nov  2 14:55:33 2023
+
+@author: eduar
+"""
+

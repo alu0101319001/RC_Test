@@ -150,7 +150,8 @@ o510 =np.dot(T051, o5151).tolist()
 o520 =np.dot(T052, o5252).tolist()
 oEF0 =np.dot(T0EF, oEFEF).tolist()
 
-# print([o00,o10,o20,o30])
+print([o00,o10,o20,o30,o40,o510,o510])
+print(oEF0)
 
 # Mostrar resultado de la cinemática directa
 muestra_origenes([o00,o10,o20,o30, o40,[[o510],[o520]]], oEF0)
